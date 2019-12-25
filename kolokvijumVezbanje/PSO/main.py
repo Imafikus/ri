@@ -14,20 +14,20 @@ MAX_RANGE = 190
 
 class Particle:
     def __init__(self):
-        self.code = self.generate_code()
+        self.position = self.generate_position()
         self.velocity = 0.0
         self.current_value = self.calculate_value()
         self.best_value = self.calculate_value()
 
-    def generate_code(self):
-        code = []
+    def generate_position(self):
+        position = []
         for i in range(NUM_OPERANDS):
-            code.append(random.randrange(MIN_RANGE, MAX_RANGE))
-        return code
+            position.append(random.randrange(MIN_RANGE, MAX_RANGE))
+        return position
 
     def calculate_value(self):
         value = 0
-        for c in self.code:
+        for c in self.position:
             value += c
         return value
 
@@ -46,9 +46,9 @@ class Particle:
         if self.velocity < -MAX_VELOCITY:
             self.velocity = -MAX_VELOCITY
 
-    def update_code(self, global_best):
+    def update_position(self, global_best):
         for i in range(NUM_OPERANDS):
-            self.code[i] += int(self.velocity)
+            self.position[i] += int(self.velocity)
         
         self.current_value = self.calculate_value()
 
@@ -61,16 +61,16 @@ class Particle:
         return global_best
 
     def __str__(self):
-        to_str = str(self.code[0]) + ' + ' + str(self.code[1]) +  ' + ' + str(self.code[2]) + ' = ' + str(self.current_value)
+        to_str = str(self.position[0]) + ' + ' + str(self.position[1]) +  ' + ' + str(self.position[2]) + ' = ' + str(self.current_value)
         return to_str
         
 def update_all_velocities(particles,global_best):
     for p in particles:
         p.update_velocity(global_best)
 
-def update_all_codes(particles,global_best):
+def update_all_positions(particles,global_best):
     for p in particles:
-        global_best = p.update_code(global_best)
+        global_best = p.update_position(global_best)
 
     return global_best
 
@@ -88,13 +88,11 @@ def main():
             global_best = particles[i].current_value
 
     for i in range(MAX_ITERATIONS):
-    
-        print_particles(particles)
-
         if global_best == TARGET_VALUE:
             break
+        
         update_all_velocities(particles, global_best)
-        global_best = update_all_codes(particles, global_best)
+        global_best = update_all_positions(particles, global_best)
     
     print("Final iteration: ")
     print_particles(particles)
